@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Book - Library Management System</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        /* Internal CSS for Add Book Page */
+        .add-book-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 0.25rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            padding: 1.5rem;
+        }
+        
+        .section-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -0.75rem;
+            margin-left: -0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group {
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding-right: 0.75rem;
+            padding-left: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .form-group.col-md-6 {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+            
+            .form-group.col-md-4 {
+                flex: 0 0 33.333333%;
+                max-width: 33.333333%;
+            }
+            
+            .form-group.col-md-3 {
+                flex: 0 0 25%;
+                max-width: 25%;
+            }
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+        
+        select.form-control {
+            height: calc(2.25rem + 2px);
+        }
+        
+        textarea.form-control {
+            height: auto;
+        }
+        
+        .form-control:focus {
+            color: #495057;
+            background-color: #fff;
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        .is-invalid .form-control {
+            border-color: #dc3545;
+        }
+        
+        .invalid-feedback {
+            display: none;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 80%;
+            color: #dc3545;
+        }
+        
+        .is-invalid .invalid-feedback {
+            display: block;
+        }
+        
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .form-section-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: #495057;
+        }
+        
+        .form-check {
+            position: relative;
+            display: block;
+            padding-left: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-check-input {
+            position: absolute;
+            margin-top: 0.3rem;
+            margin-left: -1.25rem;
+        }
+        
+        .form-check-label {
+            margin-bottom: 0;
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 1rem;
+        }
+        
+        .custom-file {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            height: calc(2.25rem + 2px);
+            margin-bottom: 0;
+        }
+        
+        .custom-file-input {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: calc(2.25rem + 2px);
+            margin: 0;
+            opacity: 0;
+        }
+        
+        .custom-file-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 1;
+            height: calc(2.25rem + 2px);
+            padding: 0.375rem 0.75rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .cover-preview {
+            width: 150px;
+            height: 200px;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        
+        .cover-preview img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .subcategory-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #dee2e6;
+            display: none;
+        }
+        
+        .isbn-info {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        
+        .help-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <div class="logo">
+                <h1>Library Management System</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="manage-books.html" class="active">Manage Books</a></li>
+                    <!-- <li><a href="manage-users.html">Manage Users</a></li>
+                    <li><a href="transactions.html">Transactions</a></li>
+                    <li><a href="reports.html">Reports</a></li> -->
+                    <li><a href="profile.html">My Profile</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                <span id="librarianName">Librarian Name</span>
+                <img src="../assets/librarian-avatar.png" alt="Librarian Avatar" id="librarianAvatar">
+            </div>
+        </header>
+        
+        <main>
+            <section class="add-book-section">
+                <div class="section-header">
+                    <h2>Add New Book</h2>
+                </div>
+                
+                <div class="add-book-container">
+                    <form id="addBookForm" onsubmit="return validateForm()">
+                        <div class="form-section">
+                            <h3 class="form-section-title">Basic Information</h3>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="title">Title*</label>
+                                    <input type="text" class="form-control" id="title" placeholder="Enter book title">
+                                    <div class="invalid-feedback">Please enter a title</div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="author">Author*</label>
+                                    <input type="text" class="form-control" id="author" placeholder="Enter author name">
+                                    <div class="invalid-feedback">Please enter an author</div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="isbn">ISBN*</label>
+                                    <input type="text" class="form-control" id="isbn" placeholder="Enter ISBN">
+                                    <div class="invalid-feedback">Please enter a valid ISBN</div>
+                                    <div class="isbn-info">Format: ISBN-13 or ISBN-10 (e.g., 978-3-16-148410-0)</div>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="publisher">Publisher</label>
+                                    <input type="text" class="form-control" id="publisher" placeholder="Enter publisher name">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="publicationYear">Publication Year</label>
+                                    <input type="number" class="form-control" id="publicationYear" min="1000" max="2099" step="1" placeholder="YYYY">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h3 class="form-section-title">Categorization</h3>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="mainCategory">Main Category*</label>
+                                    <select class="form-control" id="mainCategory">
+                                        <option value="">Select Main Category</option>
+                                        <option value="fiction">Fiction</option>
+                                        <option value="non-fiction">Non-Fiction</option>
+                                        <option value="reference">Reference</option>
+                                        <option value="periodical">Periodical</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select a main category</div>
+                                </div>
+                                
+                                <div class="form-group col-md-6">
+                                    <label for="language">Language</label>
+                                    <select class="form-control" id="language">
+                                        <option value="english">English</option>
+                                        <option value="spanish">Spanish</option>
+                                        <option value="french">French</option>
+                                        <option value="german">German</option>
+                                        <option value="chinese">Chinese</option>
+                                        <option value="japanese">Japanese</option>
+                                        <option value="arabic">Arabic</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Fiction subcategories (shown only when Fiction is selected) -->
+                            <div class="subcategory-section" id="fictionSubcategories">
+                                <label>Fiction Subcategory</label>
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="fiction-novel">
+                                            <label class="form-check-label" for="fiction-novel">Novel</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="fiction-shortstory">
+                                            <label class="form-check-label" for="fiction-shortstory">Short Story</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="fiction-poetry">
+                                            <label class="form-check-label" for="fiction-poetry">Poetry</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="fiction-scifi">
+                                            <label class="form-check-label" for="fiction-scifi">Science Fiction</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="fiction-fantasy">
+                                            <label class="form-check-label" for="fiction-fantasy">Fantasy</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="fiction-mystery">
+                                            <label class="form-check-label" for="fiction-mystery">Mystery</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="fiction-romance">
+                                            <label class="form-check-label" for="fiction-romance">Romance</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="fiction-horror">
+                                            <label class="form-check-label" for="fiction-horror">Horror</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="fiction-historical">
+                                            <label class="form-check-label" for="fiction-historical">Historical</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Non-Fiction subcategories (shown only when Non-Fiction is selected) -->
+                            <div class="subcategory-section" id="nonFictionSubcategories">
+                                <label>Non-Fiction Subcategory</label>
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="nonfiction-biography">
+                                            <label class="form-check-label" for="nonfiction-biography">Biography</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="nonfiction-history">
+                                            <label class="form-check-label" for="nonfiction-history">History</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="nonfiction-science">
+                                            <label class="form-check-label" for="nonfiction-science">Science</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="nonfiction-technology">
+                                            <label class="form-check-label" for="nonfiction-technology">Technology</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="nonfiction-philosophy">
+                                            <label class="form-check-label" for="nonfiction-philosophy">Philosophy</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="nonfiction-religion">
+                                            <label class="form-check-label" for="nonfiction-religion">Religion</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="nonfiction-selfhelp">
+                                            <label class="form-check-label" for="nonfiction-selfhelp">Self-help</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="nonfiction-cooking">
+                                            <label class="form-check-label" for="nonfiction-cooking">Cooking</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="nonfiction-travel">
+                                            <label class="form-check-label" for="nonfiction-travel">Travel</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label for="tags">Tags (comma separated)</label>
+                                    <input type="text" class="form-control" id="tags" placeholder="e.g., bestseller, award-winning, classic">
+                                    <div class="help-text">Add relevant tags to improve search results</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h3 class="form-section-title">Additional Information</h3>
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="pageCount">Page Count</label>
+                                    <input type="number" class="form-control" id="pageCount" min="1" placeholder="Enter number of pages">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="edition">Edition</label>
+                                    <input type="text" class="form-control" id="edition" placeholder="e.g., 1st, 2nd, Revised">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="dimensions">Dimensions</label>
+                                    <input type="text" class="form-control" id="dimensions" placeholder="e.g., 6 x 9 inches">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label for="description">Book Description</label>
+                                    <textarea class="form-control" id="description" rows="4" placeholder="Enter a brief description of the book"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h3 class="form-section-title">Inventory Information</h3>
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="numberOfCopies">Number of Copies*</label>
+                                    <input type="number" class="form-control" id="numberOfCopies" min="1" value="1" placeholder="Enter number of copies">
+                                    <div class="invalid-feedback">Please enter at least 1 copy</div>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="shelfLocation">Shelf Location</label>
+                                    <input type="text" class="form-control" id="shelfLocation" placeholder="e.g., A-12, Fiction Section">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="acquisitionDate">Acquisition Date</label>
+                                    <input type="date" class="form-control" id="acquisitionDate">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="price">Price (optional)</label>
+                                    <input type="number" class="form-control" id="price" min="0" step="0.01" placeholder="Enter price">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="supplier">Supplier/Vendor (optional)</label>
+                                    <input type="text" class="form-control" id="supplier" placeholder="Enter supplier name">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h3 class="form-section-title">Book Cover</h3>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <div class="cover-preview" id="coverPreview">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#dee2e6" viewBox="0 0 16 16">
+                                            <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                                            <path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13zm13 1a.5.5 0 0 1 .5.5v6l-3.775-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12v.54A.505.505 0 0 1 1 12.5v-9a.5.5 0 0 1 .5-.5h13z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="coverImage">Upload Cover Image</label>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="coverImage" accept="image/*">
+                                        <label class="custom-file-label" for="coverImage">Choose file</label>
+                                    </div>
+                                    <div class="help-text">Recommended size: 300x450 pixels. Max file size: 2MB.</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="btn-container">
+                            <button type="button" class="btn btn-secondary" onclick="window.location.href='manage-books.html'">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Add Book</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 Library Management System. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <script src="../db.js"></script>
+    <script src="../script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set the acquisition date to today by default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('acquisitionDate').value = today;
+            
+            // Show/hide subcategories based on main category selection
+            document.getElementById('mainCategory').addEventListener('change', function() {
+                const fictionSubcategories = document.getElementById('fictionSubcategories');
+                const nonFictionSubcategories = document.getElementById('nonFictionSubcategories');
+                
+                // Hide all subcategory sections first
+                fictionSubcategories.style.display = 'none';
+                nonFictionSubcategories.style.display = 'none';
+                
+                // Show the appropriate subcategory section based on selection
+                if (this.value === 'fiction') {
+                    fictionSubcategories.style.display = 'block';
+                } else if (this.value === 'non-fiction') {
+                    nonFictionSubcategories.style.display = 'block';
+                }
+            });
+            
+            // Handle file input change for cover image preview
+            document.getElementById('coverImage').addEventListener('change', function() {
+                const file = this.files[0];
+                const coverPreview = document.getElementById('coverPreview');
+                const fileLabel = document.querySelector('.custom-file-label');
+                
+                // Update the file input label with the selected file name
+                fileLabel.textContent = file ? file.name : 'Choose file';
+                
+                if (file) {
+                    // Check file type
+                    if (!file.type.match('image.*')) {
+                        alert('Please select an image file');
+                        return;
+                    }
+                    
+                    // Check file size (2MB max)
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('File size should be less than 2MB');
+                        return;
+                    }
+                    
+                    // Preview the image
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        coverPreview.innerHTML = `<img src="${e.target.result}" alt="Book Cover Preview">`;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    // Reset preview if no file selected
+                    coverPreview.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#dee2e6" viewBox="0 0 16 16">
+                            <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                            <path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13zm13 1a.5.5 0 0 1 .5.5v6l-3.775-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12v.54A.505.505 0 0 1 1 12.5v-9a.5.5 0 0 1 .5-.5h13z"/>
+                        </svg>
+                    `;
+                }
+            });
+        });
+        
+        function validateForm() {
+            let isValid = true;
+            const requiredFields = ['title', 'author', 'isbn', 'mainCategory', 'numberOfCopies'];
+            
+            requiredFields.forEach(field => {
+                const input = document.getElementById(field);
+                if (!input.value.trim()) {
+                    input.parentElement.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    input.parentElement.classList.remove('is-invalid');
+                }
+            });
+            
+            // Validate ISBN format (basic validation)
+            const isbnInput = document.getElementById('isbn');
+            const isbn = isbnInput.value.trim();
+            if (isbn) {
+                // Remove dashes and spaces for validation
+                const cleanIsbn = isbn.replace(/[-\s]/g, '');
+                
+                // Check if it's a valid ISBN-10 or ISBN-13
+                const isValidIsbn10 = /^\d{9}[\dX]$/.test(cleanIsbn);
+                const isValidIsbn13 = /^\d{13}$/.test(cleanIsbn);
+                
+                if (!isValidIsbn10 && !isValidIsbn13) {
+                    isbnInput.parentElement.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+            
+            // Validate number of copies
+            const copiesInput = document.getElementById('numberOfCopies');
+            const copies = parseInt(copiesInput.value);
+            if (isNaN(copies) || copies < 1) {
+                copiesInput.parentElement.classList.add('is-invalid');
+                isValid = false;
+            }
+            
+            // If the form is valid, submit it (in a real app, this would save the book to database)
+            if (isValid) {
+                // In this demo we'll just show a success message
+                addBookToDatabase();
+                alert('Book added successfully!');
+                // Redirect back to manage books page
+                window.location.href = 'manage-books.html';
+            }
+            
+            return false; // Prevent form submission - we handle it with JavaScript
+        }
+        
+        function addBookToDatabase() {
+            // Gather all the form values
+            const bookData = {
+                title: document.getElementById('title').value,
+                author: document.getElementById('author').value,
+                isbn: document.getElementById('isbn').value,
+                publisher: document.getElementById('publisher').value,
+                publicationYear: document.getElementById('publicationYear').value,
+                category: document.getElementById('mainCategory').value,
+                language: document.getElementById('language').value,
+                tags: document.getElementById('tags').value,
+                pageCount: document.getElementById('pageCount').value,
+                edition: document.getElementById('edition').value,
+                dimensions: document.getElementById('dimensions').value,
+                description: document.getElementById('description').value,
+                numberOfCopies: document.getElementById('numberOfCopies').value,
+                shelfLocation: document.getElementById('shelfLocation').value,
+                acquisitionDate: document.getElementById('acquisitionDate').value,
+                price: document.getElementById('price').value,
+                supplier: document.getElementById('supplier').value
+            };
+            
+            // Gather subcategory selections based on main category
+            if (bookData.category === 'fiction') {
+                bookData.subcategories = [];
+                const fictionCheckboxes = document.querySelectorAll('#fictionSubcategories input[type="checkbox"]:checked');
+                fictionCheckboxes.forEach(checkbox => {
+                    bookData.subcategories.push(checkbox.id.replace('fiction-', ''));
+                });
+            } else if (bookData.category === 'non-fiction') {
+                bookData.subcategories = [];
+                const nonFictionCheckboxes = document.querySelectorAll('#nonFictionSubcategories input[type="checkbox"]:checked');
+                nonFictionCheckboxes.forEach(checkbox => {
+                    bookData.subcategories.push(checkbox.id.replace('nonfiction-', ''));
+                });
+            }
+            
+            // Get cover image if available
+            const coverImageInput = document.getElementById('coverImage');
+            if (coverImageInput.files && coverImageInput.files[0]) {
+                // In a real app, we would upload the file to a server
+                bookData.hasCoverImage = true;
+            }
+            
+            console.log('Adding book to database:', bookData);
+            
+            // In a real app, we would send this data to the server
+            // For this demo, we'll use our simulated database in localStorage
+            const bookDataForStorage = {
+                ...bookData,
+                // Generate copies array based on numberOfCopies
+                copies: Array.from({ length: parseInt(bookData.numberOfCopies) }, (_, i) => ({
+                    copyId: Date.now() + i, // Generate unique IDs
+                    status: 'available',
+                    location: bookData.shelfLocation || 'General Collection'
+                }))
+            };
+            
+            // Use the add method from our simulated database
+            db.books.add(bookDataForStorage);
+        }
+    </script>
+</body>
+</html>

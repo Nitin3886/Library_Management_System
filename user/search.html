@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Books - Library Management System</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        /* Internal CSS for Search Page */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fa;
+            color: #212529;
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+        }
+
+        header {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo h1 {
+            color: #4a6da7;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        nav {
+            flex: 1;
+            margin: 0 2rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+            padding: 0;
+            margin: 0;
+            justify-content: center;
+        }
+
+        nav ul li a {
+            color: #212529;
+            text-decoration: none;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            transition: background-color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: #f8f9fa;
+        }
+
+        nav ul li a.active {
+            color: #4a6da7;
+            font-weight: bold;
+            border-bottom: 2px solid #4a6da7;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-info span {
+            font-weight: 500;
+        }
+
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #f0f0f0;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .search-section {
+            margin-bottom: 2rem;
+        }
+
+        .search-section h2 {
+            margin-bottom: 1.5rem;
+            color: #212529;
+            font-size: 1.75rem;
+        }
+
+        .search-container {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        #searchForm {
+            width: 100%;
+        }
+
+        .search-input {
+            display: flex;
+            margin-bottom: 1.5rem;
+            width: 100%;
+        }
+
+        .search-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem 0 0 0.25rem;
+            font-size: 1rem;
+            border-right: none;
+        }
+
+        .search-input button {
+            background-color: #4a6da7;
+            border: 1px solid #4a6da7;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0 0.25rem 0.25rem 0;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .search-input button:hover {
+            background-color: #3a5485;
+        }
+
+        .search-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .filter-group select {
+            padding: 0.5rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            background-color: white;
+            color: #495057;
+        }
+
+        .search-results {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            padding: 1.5rem;
+        }
+
+        .search-results h3 {
+            margin-bottom: 1.5rem;
+            color: #212529;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        #resultCount {
+            font-size: 1rem;
+            color: #6c757d;
+            font-weight: normal;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .empty-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem 0;
+            color: #6c757d;
+        }
+
+        .empty-results svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            color: #dee2e6;
+        }
+
+        .empty-results p:first-of-type {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-card {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+        }
+
+        .book-info {
+            padding: 1rem;
+        }
+
+        .book-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #212529;
+        }
+
+        .book-author {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-status {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .book-status.available {
+            color: #28a745;
+        }
+
+        .book-status.borrowed {
+            color: #dc3545;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            border-top: 1px solid #dee2e6;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            nav {
+                margin: 1rem 0;
+            }
+
+            .search-input {
+                flex-direction: column;
+            }
+
+            .search-input input {
+                border-radius: 0.25rem;
+                border-right: 1px solid #dee2e6;
+                margin-bottom: 0.5rem;
+            }
+
+            .search-input button {
+                border-radius: 0.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <div class="logo">
+                <h1>Library Management System</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="search.html" class="active">Search Books</a></li>
+                    <li><a href="borrowed.html">My Borrowed Books</a></li>
+                    <li><a href="profile.html">My Profile</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                <span id="userName">User Name</span>
+                <img src="../assets/user-avatar.png" alt="User Avatar" id="userAvatar">
+            </div>
+        </header>
+        
+        <main>
+            <section class="search-section">
+                <h2>Search Books</h2>
+                <div class="search-container">
+                    <form id="searchForm">
+                        <div class="search-input">
+                            <input type="text" id="searchQuery" name="searchQuery" placeholder="Search by title, author, or ISBN...">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                        
+                        <div class="search-filters">
+                            <div class="filter-group">
+                                <label for="category">Category</label>
+                                <select id="category" name="category">
+                                    <option value="">All Categories</option>
+                                    <option value="fiction">Fiction</option>
+                                    <option value="non-fiction">Non-Fiction</option>
+                                    <option value="science">Science</option>
+                                    <option value="history">History</option>
+                                    <option value="biography">Biography</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="arts">Arts</option>
+                                    <option value="philosophy">Philosophy</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="availability">Availability</label>
+                                <select id="availability" name="availability">
+                                    <option value="">All</option>
+                                    <option value="available">Available</option>
+                                    <option value="unavailable">Unavailable</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="sortBy">Sort By</label>
+                                <select id="sortBy" name="sortBy">
+                                    <option value="relevance">Relevance</option>
+                                    <option value="title">Title</option>
+                                    <option value="author">Author</option>
+                                    <option value="year">Publication Year</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="search-results">
+                    <h3>Search Results <span id="resultCount">(0)</span></h3>
+                    <div class="books-grid" id="searchResults">
+                        <!-- Empty state placeholder -->
+                        <div class="empty-results">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                            <p>No search results to display</p>
+                            <p>Try searching for a book title, author, or ISBN</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 Library Management System. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <script src="../db.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>

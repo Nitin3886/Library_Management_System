@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Borrowed Books - Library Management System</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <div class="logo">
+                <h1>Library Management System</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="search.html">Search Books</a></li>
+                    <li><a href="borrowed.html" class="active">My Borrowed Books</a></li>
+                    <li><a href="profile.html">My Profile</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                <span id="userName">User Name</span>
+                <img src="../assets/user-avatar.png" alt="User Avatar" id="userAvatar">
+            </div>
+        </header>
+        
+        <main>
+            <section class="borrowed-section">
+                <h2>My Borrowed Books</h2>
+                
+                <div class="tab-container">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="current">Currently Borrowed</button>
+                        <button class="tab-btn" data-tab="history">Borrowing History</button>
+                    </div>
+                    
+                    <div class="tab-content active" id="current-tab">
+                        <div class="filter-options">
+                            <select id="currentSortFilter">
+                                <option value="dueDate">Sort by Due Date</option>
+                                <option value="borrowDate">Sort by Borrow Date</option>
+                                <option value="title">Sort by Title</option>
+                            </select>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="data-table" id="currentBorrowedTable">
+                                <thead>
+                                    <tr>
+                                        <th>Book Cover</th>
+                                        <th>Title</th>
+                                        <th>Author</th>
+                                        <th>Borrowed Date</th>
+                                        <th>Due Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="currentBorrowedBody">
+                                    <!-- Current borrowed books will be loaded here via JavaScript -->
+                                </tbody>
+                            </table>
+                            <div id="noBorrowedBooks" class="no-data-message" style="display: none;">
+                                <p>You haven't borrowed any books yet.</p>
+                                <a href="search.html" class="btn btn-primary">Browse Books</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="history-tab">
+                        <div class="filter-options">
+                            <select id="historySortFilter">
+                                <option value="returnDate">Sort by Return Date</option>
+                                <option value="borrowDate">Sort by Borrow Date</option>
+                                <option value="title">Sort by Title</option>
+                            </select>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="data-table" id="historyBorrowedTable">
+                                <thead>
+                                    <tr>
+                                        <th>Book Cover</th>
+                                        <th>Title</th>
+                                        <th>Author</th>
+                                        <th>Borrowed Date</th>
+                                        <th>Return Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyBorrowedBody">
+                                    <!-- Borrowing history will be loaded here via JavaScript -->
+                                </tbody>
+                            </table>
+                            <div id="noHistoryBooks" class="no-data-message" style="display: none;">
+                                <p>You don't have any borrowing history yet.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Renew Book Modal -->
+            <div id="renewModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Renew Book</h3>
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to request renewal for "<span id="renewBookTitle"></span>"?</p>
+                        <p>Current due date: <strong id="currentDueDate"></strong></p>
+                        <p>New due date if approved: <strong id="newDueDate"></strong></p>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" id="cancelRenew">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="confirmRenew">Request Renewal</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 Library Management System. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <script src="../db.js"></script>
+    <script src="../script.js"></script>
+    <script>
+        // Additional JavaScript for borrowed books page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching functionality
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons and contents
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Add active class to clicked button and corresponding content
+                    button.classList.add('active');
+                    const tabId = button.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+            
+            // Load borrowed books data
+            loadBorrowedBooks();
+            
+            // Sort filters change event
+            document.getElementById('currentSortFilter').addEventListener('change', function() {
+                loadBorrowedBooks();
+            });
+            
+            document.getElementById('historySortFilter').addEventListener('change', function() {
+                loadBorrowedBooks();
+            });
+            
+            // Setup modal functionality
+            const renewModal = document.getElementById('renewModal');
+            const closeButtons = document.querySelectorAll('.close, #cancelRenew');
+            
+            closeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    renewModal.style.display = 'none';
+                });
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', (event) => {
+                if (event.target === renewModal) {
+                    renewModal.style.display = 'none';
+                }
+            });
+            
+            // Setup confirm renew button
+            document.getElementById('confirmRenew').addEventListener('click', function() {
+                const transactionId = this.getAttribute('data-transaction-id');
+                renewBook(transactionId);
+                renewModal.style.display = 'none';
+            });
+        });
+        
+        // Load user's borrowed books
+        function loadBorrowedBooks() {
+            if (!currentUser) return;
+            
+            const currentBorrowedBody = document.getElementById('currentBorrowedBody');
+            const historyBorrowedBody = document.getElementById('historyBorrowedBody');
+            const noBorrowedBooks = document.getElementById('noBorrowedBooks');
+            const noHistoryBooks = document.getElementById('noHistoryBooks');
+            
+            // Get all transactions for current user
+            const userTransactions = db.transactions.getByUser(currentUser.id);
+            
+            // Filter for current (active) borrowed books
+            const currentTransactions = userTransactions.filter(t => 
+                t.type === 'borrow' && t.status === 'active');
+            
+            // Filter for history (returned) borrowed books
+            const historyTransactions = userTransactions.filter(t => 
+                t.type === 'borrow' && t.status === 'returned');
+            
+            // Sort current transactions based on selected filter
+            const currentSortBy = document.getElementById('currentSortFilter').value;
+            sortTransactions(currentTransactions, currentSortBy);
+            
+            // Sort history transactions based on selected filter
+            const historySortBy = document.getElementById('historySortFilter').value;
+            sortTransactions(historyTransactions, historySortBy);
+            
+            // Update current borrowed books table
+            currentBorrowedBody.innerHTML = '';
+            
+            if (currentTransactions.length === 0) {
+                noBorrowedBooks.style.display = 'block';
+                document.getElementById('currentBorrowedTable').style.display = 'none';
+            } else {
+                noBorrowedBooks.style.display = 'none';
+                document.getElementById('currentBorrowedTable').style.display = 'table';
+                
+                currentTransactions.forEach(transaction => {
+                    const book = db.books.getById(transaction.bookId);
+                    if (!book) return;
+                    
+                    // Check if the book is overdue
+                    const today = new Date();
+                    const dueDate = new Date(transaction.dueDate);
+                    const isOverdue = dueDate < today;
+                    
+                    // Calculate days remaining or overdue
+                    const diffTime = Math.abs(dueDate - today);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <img src="${book.coverImage || '../assets/book-placeholder.jpg'}" alt="${book.title}" class="table-book-cover">
+                        </td>
+                        <td><a href="book-details.html?id=${book.id}">${book.title}</a></td>
+                        <td>${book.author}</td>
+                        <td>${transaction.issueDate}</td>
+                        <td class="${isOverdue ? 'text-danger' : ''}">${transaction.dueDate} 
+                            ${isOverdue 
+                                ? `<span class="overdue-badge">${diffDays} days overdue</span>` 
+                                : `<span class="days-remaining">${diffDays} days left</span>`}
+                        </td>
+                        <td><span class="status-badge ${isOverdue ? 'overdue' : 'borrowed'}">${isOverdue ? 'Overdue' : 'Borrowed'}</span></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm renew-btn" data-transaction-id="${transaction.id}" data-book-title="${book.title}" data-due-date="${transaction.dueDate}">Renew</button>
+                        </td>
+                    `;
+                    
+                    currentBorrowedBody.appendChild(row);
+                });
+                
+                // Add event listeners for renew buttons
+                const renewButtons = document.querySelectorAll('.renew-btn');
+                renewButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const transactionId = this.getAttribute('data-transaction-id');
+                        const bookTitle = this.getAttribute('data-book-title');
+                        const currentDueDate = this.getAttribute('data-due-date');
+                        
+                        // Calculate new due date (14 days from current due date)
+                        const dueDate = new Date(currentDueDate);
+                        dueDate.setDate(dueDate.getDate() + 14);
+                        const newDueDateStr = dueDate.toISOString().split('T')[0];
+                        
+                        // Show renew modal
+                        document.getElementById('renewBookTitle').textContent = bookTitle;
+                        document.getElementById('currentDueDate').textContent = currentDueDate;
+                        document.getElementById('newDueDate').textContent = newDueDateStr;
+                        document.getElementById('confirmRenew').setAttribute('data-transaction-id', transactionId);
+                        
+                        document.getElementById('renewModal').style.display = 'block';
+                    });
+                });
+            }
+            
+            // Update history borrowed books table
+            historyBorrowedBody.innerHTML = '';
+            
+            if (historyTransactions.length === 0) {
+                noHistoryBooks.style.display = 'block';
+                document.getElementById('historyBorrowedTable').style.display = 'none';
+            } else {
+                noHistoryBooks.style.display = 'none';
+                document.getElementById('historyBorrowedTable').style.display = 'table';
+                
+                historyTransactions.forEach(transaction => {
+                    const book = db.books.getById(transaction.bookId);
+                    if (!book) return;
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <img src="${book.coverImage || '../assets/book-placeholder.jpg'}" alt="${book.title}" class="table-book-cover">
+                        </td>
+                        <td><a href="book-details.html?id=${book.id}">${book.title}</a></td>
+                        <td>${book.author}</td>
+                        <td>${transaction.issueDate}</td>
+                        <td>${transaction.returnDate}</td>
+                        <td><span class="status-badge returned">Returned</span></td>
+                    `;
+                    
+                    historyBorrowedBody.appendChild(row);
+                });
+            }
+        }
+        
+        // Sort transactions based on selected filter
+        function sortTransactions(transactions, sortBy) {
+            switch(sortBy) {
+                case 'dueDate':
+                    transactions.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+                    break;
+                case 'returnDate':
+                    transactions.sort((a, b) => new Date(b.returnDate) - new Date(a.returnDate));
+                    break;
+                case 'borrowDate':
+                    transactions.sort((a, b) => new Date(b.issueDate) - new Date(a.issueDate));
+                    break;
+                case 'title':
+                    transactions.sort((a, b) => {
+                        const bookA = db.books.getById(a.bookId);
+                        const bookB = db.books.getById(b.bookId);
+                        if (bookA && bookB) {
+                            return bookA.title.localeCompare(bookB.title);
+                        }
+                        return 0;
+                    });
+                    break;
+            }
+        }
+        
+        // Renew a book
+        function renewBook(transactionId) {
+            const transaction = db.transactions.getById(parseInt(transactionId));
+            if (!transaction) {
+                showMessage('Transaction not found.', 'error');
+                return;
+            }
+            
+            // Calculate new due date (14 days from current due date)
+            const dueDate = new Date(transaction.dueDate);
+            dueDate.setDate(dueDate.getDate() + 14);
+            const newDueDateStr = dueDate.toISOString().split('T')[0];
+            
+            // In a real app, this would create a renewal request that needs librarian approval
+            // For demo, we'll just update the due date directly
+            const updatedTransaction = db.transactions.update(transaction.id, {
+                dueDate: newDueDateStr,
+                renewalDate: new Date().toISOString().split('T')[0],
+                renewalCount: (transaction.renewalCount || 0) + 1
+            });
+            
+            // Also update the copy's due date
+            db.books.updateCopyStatus(transaction.bookId, transaction.copyId, 'borrowed', {
+                borrowedBy: currentUser.id,
+                dueDate: newDueDateStr
+            });
+            
+            if (updatedTransaction) {
+                showMessage('Book renewed successfully! New due date: ' + newDueDateStr, 'success');
+                
+                // Reload the borrowed books list
+                setTimeout(() => {
+                    loadBorrowedBooks();
+                }, 1000);
+            } else {
+                showMessage('Failed to renew book. Please try again.', 'error');
+            }
+        }
+    </script>
+    <style>
+        /* Additional CSS for borrowed books page */
+        .tab-container {
+            background-color: var(--card-bg);
+            border-radius: 0.25rem;
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+        
+        .tabs {
+            display: flex;
+            background-color: var(--light-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            border-bottom-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 1.5rem;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .filter-options {
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .table-book-cover {
+            width: 60px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .overdue-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 0.125rem 0.375rem;
+            margin-left: 0.5rem;
+            border-radius: 0.25rem;
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .days-remaining {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 0.125rem 0.375rem;
+            margin-left: 0.5rem;
+            border-radius: 0.25rem;
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+        
+        .status-badge.returned {
+            background-color: rgba(108, 117, 125, 0.2);
+            color: var(--secondary-color);
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .no-data-message {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .no-data-message p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+        
+        .text-danger {
+            color: var(--danger-color);
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Library Management System</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <div class="logo">
+                <h1>Library Management System</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                    <li><a href="search.html">Search Books</a></li>
+                    <li><a href="borrowed.html">My Borrowed Books</a></li>
+                    <li><a href="profile.html">My Profile</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                <span id="userName">User Name</span>
+                <img src="../assets/user-avatar.png" alt="User Avatar" id="userAvatar">
+            </div>
+        </header>
+        
+        <main>
+            <section class="dashboard-summary">
+                <h2>Welcome, <span id="welcomeUserName">User</span>!</h2>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <h3>Books Borrowed</h3>
+                        <p id="borrowedCount">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Books Overdue</h3>
+                        <p id="overdueCount">0</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="recent-books">
+                <h2>Recently Added Books</h2>
+                <div class="books-grid" id="recentBooks">
+                    <!-- Recent books will be loaded here via JavaScript -->
+                </div>
+            </section>
+            
+            <section class="popular-books">
+                <h2>Popular Books</h2>
+                <div class="books-grid" id="popularBooks">
+                    <!-- Popular books will be loaded here via JavaScript -->
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 Library Management System. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <script src="../db.js"></script>
+    <script src="../script.js"></script>
+    <script src="user-dashboard.js"></script>
+</body>
+</html>

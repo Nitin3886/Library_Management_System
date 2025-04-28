@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librarian Dashboard - Library Management System</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <div class="logo">
+                <h1>Library Management System</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                    <li><a href="manage-books.html">Manage Books</a></li>
+                    <!-- <li><a href="manage-users.html">Manage Users</a></li> -->
+                    <!-- <li><a href="transactions.html">Transactions</a></li>
+                    <li><a href="reports.html">Reports</a></li> -->
+                    <li><a href="profile.html">My Profile</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                <span id="librarianName">Librarian Name</span>
+                <img src="../assets/librarian-avatar.png" alt="Librarian Avatar" id="librarianAvatar">
+            </div>
+        </header>
+        
+        <main>
+            <section class="dashboard-summary">
+                <h2>Welcome, <span id="welcomeLibrarianName">Librarian</span>!</h2>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <h3>Total Books</h3>
+                        <p id="totalBooks">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Books Borrowed</h3>
+                        <p id="totalBorrowed">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Users</h3>
+                        <p id="totalUsers">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Overdue Books</h3>
+                        <p id="totalOverdue">0</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="quick-actions">
+                <h2>Quick Actions</h2>
+                <div class="action-buttons">
+                    <a href="add-book.html" class="btn btn-primary">Add New Book</a>
+                    <a href="add-user.html" class="btn btn-primary">Add New User</a>
+                    <a href="issue-book.html" class="btn btn-primary">Issue Book</a>
+                    <a href="return-book.html" class="btn btn-primary">Return Book</a>
+                </div>
+            </section>
+            
+            <div class="dashboard-grid">
+                <section class="recent-transactions">
+                    <h2>Recent Transactions</h2>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User</th>
+                                    <th>Book</th>
+                                    <th>Type</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentTransactionsBody">
+                                <!-- Transactions will be loaded here via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="transactions.html" class="view-all">View All Transactions</a>
+                </section>
+                
+                <section class="book-requests">
+                    <h2>Book Requests</h2>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Request ID</th>
+                                    <th>User</th>
+                                    <th>Book</th>
+                                    <th>Request Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookRequestsBody">
+                                <!-- Book requests will be loaded here via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="book-requests.html" class="view-all">View All Requests</a>
+                </section>
+            </div>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 Library Management System. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <script src="../db.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>

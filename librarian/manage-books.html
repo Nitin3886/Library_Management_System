@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Books - Library Management System</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <div class="logo">
+                <h1>Library Management System</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="manage-books.html" class="active">Manage Books</a></li>
+                    <!-- <li><a href="manage-users.html">Manage Users</a></li>
+                    <li><a href="transactions.html">Transactions</a></li>
+                    <li><a href="reports.html">Reports</a></li> -->
+                    <li><a href="profile.html">My Profile</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+            <div class="user-info">
+                <span id="librarianName">Librarian Name</span>
+                <img src="../assets/librarian-avatar.png" alt="Librarian Avatar" id="librarianAvatar">
+            </div>
+        </header>
+        
+        <main>
+            <section class="manage-books-section">
+                <div class="section-header">
+                    <h2>Manage Books</h2>
+                    <button id="addBookBtn" class="btn btn-primary">Add New Book</button>
+                </div>
+                
+                <div class="search-filter-container">
+                    <div class="search-box">
+                        <input type="text" id="bookSearchInput" placeholder="Search books...">
+                        <button id="bookSearchBtn" class="btn btn-secondary">Search</button>
+                    </div>
+                    
+                    <div class="filter-options">
+                        <select id="categoryFilter">
+                            <option value="">All Categories</option>
+                            <option value="fiction">Fiction</option>
+                            <option value="non-fiction">Non-Fiction</option>
+                            <option value="science">Science</option>
+                            <option value="history">History</option>
+                            <option value="biography">Biography</option>
+                            <option value="technology">Technology</option>
+                            <option value="arts">Arts</option>
+                            <option value="philosophy">Philosophy</option>
+                        </select>
+                        
+                        <select id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="available">Available</option>
+                            <option value="borrowed">Borrowed</option>
+                            <option value="reserved">Reserved</option>
+                            <option value="damaged">Damaged</option>
+                            <option value="lost">Lost</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="books-table-container">
+                    <table class="data-table" id="booksTable">
+                        <thead>
+                            <tr>
+                                <th>Book ID</th>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>ISBN</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Total Copies</th>
+                                <th>Available Copies</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="booksTableBody">
+                            <!-- Books data will be loaded here via JavaScript -->
+                        </tbody>
+                    </table>
+                    
+                    <div class="pagination">
+                        <button id="prevPage" class="btn btn-secondary">&laquo; Previous</button>
+                        <span id="pageInfo">Page 1 of 1</span>
+                        <button id="nextPage" class="btn btn-secondary">Next &raquo;</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Add Book Modal -->
+            <div id="addBookModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Add New Book</h3>
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addBookForm">
+                            <div class="form-group">
+                                <label for="bookTitle">Title</label>
+                                <input type="text" id="bookTitle" name="title" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bookAuthor">Author</label>
+                                <input type="text" id="bookAuthor" name="author" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bookISBN">ISBN</label>
+                                <input type="text" id="bookISBN" name="isbn" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bookCategory">Category</label>
+                                <select id="bookCategory" name="category" required>
+                                    <option value="">Select Category</option>
+                                    <option value="fiction">Fiction</option>
+                                    <option value="non-fiction">Non-Fiction</option>
+                                    <option value="science">Science</option>
+                                    <option value="history">History</option>
+                                    <option value="biography">Biography</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="arts">Arts</option>
+                                    <option value="philosophy">Philosophy</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bookPublisher">Publisher</label>
+                                <input type="text" id="bookPublisher" name="publisher">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bookYear">Publication Year</label>
+                                <input type="number" id="bookYear" name="publicationYear">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bookCopies">Number of Copies</label>
+                                <input type="number" id="bookCopies" name="copies" min="1" value="1" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bookDescription">Description</label>
+                                <textarea id="bookDescription" name="description" rows="4"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bookCover">Book Cover</label>
+                                <input type="file" id="bookCover" name="cover" accept="image/*">
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" id="cancelAddBook">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Add Book</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Edit Book Modal -->
+            <div id="editBookModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Edit Book</h3>
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editBookForm">
+                            <input type="hidden" id="editBookId" name="bookId">
+                            
+                            <div class="form-group">
+                                <label for="editBookTitle">Title</label>
+                                <input type="text" id="editBookTitle" name="title" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="editBookAuthor">Author</label>
+                                <input type="text" id="editBookAuthor" name="author" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="editBookISBN">ISBN</label>
+                                <input type="text" id="editBookISBN" name="isbn" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="editBookCategory">Category</label>
+                                <select id="editBookCategory" name="category" required>
+                                    <option value="">Select Category</option>
+                                    <option value="fiction">Fiction</option>
+                                    <option value="non-fiction">Non-Fiction</option>
+                                    <option value="science">Science</option>
+                                    <option value="history">History</option>
+                                    <option value="biography">Biography</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="arts">Arts</option>
+                                    <option value="philosophy">Philosophy</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="editBookPublisher">Publisher</label>
+                                <input type="text" id="editBookPublisher" name="publisher">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="editBookYear">Publication Year</label>
+                                <input type="number" id="editBookYear" name="publicationYear">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="editBookCopies">Number of Copies</label>
+                                <input type="number" id="editBookCopies" name="copies" min="1" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="editBookDescription">Description</label>
+                                <textarea id="editBookDescription" name="description" rows="4"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="editBookCover">Book Cover</label>
+                                <div class="current-cover">
+                                    <img id="currentBookCover" src="" alt="Current cover">
+                                </div>
+                                <input type="file" id="editBookCover" name="cover" accept="image/*">
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" id="cancelEditBook">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Delete Book Confirmation Modal -->
+            <div id="deleteBookModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Confirm Deletion</h3>
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete the book <strong id="deleteBookTitle"></strong>?</p>
+                        <p class="warning">This action cannot be undone.</p>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" id="cancelDeleteBook">Cancel</button>
+                            <button type="button" class="btn btn-danger" id="confirmDeleteBook">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>&copy; 2023 Library Management System. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <script src="../db.js"></script>
+    <script src="../script.js"></script>
+    <script src="manage-books.js"></script>
+</body>
+</html>
